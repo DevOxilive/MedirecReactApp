@@ -17,7 +17,7 @@ export const HomeDoctorScreen = () => {
     <>
     
       <div>
-        <h1>Bienvenido médico {user.usa_nombre}</h1>
+        <h1>Bienvenido médico </h1>
       </div>
 
     </>

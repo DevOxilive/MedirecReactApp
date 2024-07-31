@@ -29,6 +29,7 @@ const dbMedirecConfig = {
     user: 'root',
     password: '', // Ajusta esto si tienes una contraseña
     database: 'medirecactreact',
+    port: '3306'
 };
 
 // Configuración de la conexión para Sepomex
@@ -37,6 +38,7 @@ const dbSepomexConfig = {
     user: 'root',
     password: '',
     database: 'sepomex',
+    port: '3306'
 };
 
 // Crear conexiones
