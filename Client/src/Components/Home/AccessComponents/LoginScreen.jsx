@@ -41,7 +41,6 @@ export const Login = () => {
         localStorage.setItem("user", JSON.stringify(userData));
         console.log(userData); // Guarda toda la información del usuario en el localStorage
         setRedirectPath(response.data.rol);
-        console.log(redirectPath);
 
         setShowAuthModal(true); // Muestra el modal de bienvenida
       } else if (response.status === 500) {
@@ -58,10 +57,8 @@ export const Login = () => {
   // Función para manejar el cierre del modal y redirigir
   const handleAuthModalClose = () => {
     setShowAuthModal(false);
-    console.log(redirectPath);
     // Redirige al usuario según el rol almacenado
-    switch (redirectPath) {
-      
+    switch (redirectPath) {  
       case 1:
         navigate("/homePaciente");
         break;

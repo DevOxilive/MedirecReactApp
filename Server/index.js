@@ -21,6 +21,7 @@ import { EditProduct } from './JavaScript/Admin/Products/EditProduct.js';
 import { DeleteProduct } from './JavaScript/Admin/Products/deleteProduct.js';
 import { RegisterProduct } from './JavaScript/Admin/Products/RegisterProduct.js';
 import { registerUser } from './JavaScript/Users/registerUser.js';
+import { getUser } from './JavaScript/Doctor/Users/getUser.js';
 
 
 // Configuración de la conexión para Medirec
@@ -84,6 +85,7 @@ GetProducts(app,dbMedirec);
 EditProduct(app,dbMedirec);
 DeleteProduct(app,dbMedirec);
 RegisterProduct(app,dbMedirec);
+getUser(app, dbMedirec);
 
 
 

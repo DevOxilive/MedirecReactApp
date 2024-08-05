@@ -1,7 +1,7 @@
 export const GetUsers = (app, dbMedirec, dbSepomex) => {
   app.get("/getUsuarios", (req, res) => {
     // Consulta todos los usuarios sin paginación
-    dbMedirec.query("SELECT * FROM usuario", (err, usuarios) => {
+    dbMedirec.query("SELECT * FROM usuarios", (err, usuarios) => {
       if (err) {
         return res.status(500).send(err);
       }

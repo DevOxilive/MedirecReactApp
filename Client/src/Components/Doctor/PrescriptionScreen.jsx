@@ -6,7 +6,7 @@ import axios from "axios"
 export const PrescriptionScreen = () => {
 
     const patients = async () => {
-        const response = await axios.get('http://localhost:3001/getUsuarios');
+        const response = await axios.get('http://localhost:3001/getPacientes');
         console.log(response);
     }
     useEffect(() => {
