@@ -12,42 +12,10 @@ export const RegisterScreen = () => {
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [validated, setValidated] = useState(false);
 
-  const [states, setStates] = useState([]);
-  const [municipalities, setMunicipalities] = useState([]);
+  const [state, setState] = useState("");
+  const [municipality, setMunicipality] = useState("");
   const [colonies, setColonies] = useState([]);
-  const [selectedState, setSelectedState] = useState("");
-  const [selectedMunicipality, setSelectedMunicipality] = useState("");
   const [selectedColonia, setSelectedColonia] = useState("");
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:3001/estados")
-      .then((response) => setStates(response.data))
-      .catch((error) => console.error("Error al cargar los estados:", error));
-  }, []);
-
-  const handleStateChange = (event) => {
-    const stateId = event.target.value;
-    setSelectedState(stateId);
-    setMunicipalities([]);
-    setColonies([]);
-    axios
-      .get(`http://localhost:3001/municipios/${stateId}`)
-      .then((response) => setMunicipalities(response.data))
-      .catch((error) =>
-        console.error("Error al cargar los municipios:", error)
-      );
-  };
-
-  const handleMunicipalityChange = (event) => {
-    const municipalityId = event.target.value;
-    setSelectedMunicipality(municipalityId);
-    setColonies([]);
-    axios
-      .get(`http://localhost:3001/colonias/${municipalityId}`)
-      .then((response) => setColonies(response.data))
-      .catch((error) => console.error("Error al cargar las colonias:", error));
-  };
 
   const togglePasswordVisibility = (field) => {
     if (field === "password") {
@@ -56,6 +24,37 @@ export const RegisterScreen = () => {
       setShowConfirmPassword(!showConfirmPassword);
     }
   };
+
+  //Inicio funciones Sepomex
+  const fetchColonies = (event) => {
+    const postalCode = event.target.value;
+    setSelectedColonia("");
+    setColonies([]);
+    setMunicipality("");
+    setState("");
+    if (postalCode.length == 5) {
+      axios.get(`http://localhost:3001/colonias/${postalCode}`)
+        .then((response) => {
+          setColonies(response.data);
+        })
+        .catch((error) => console.log("Error al cargar las colonias: ", error));
+    }
+  }
+  const handleColonyChange = (event) => {
+    const colonyId = event.target.value;
+    setMunicipality("");
+    setState("");
+    if (colonyId != "") {
+      setSelectedColonia(colonyId);
+      axios.get(`http://localhost:3001/estado/municipio/${colonyId}`)
+        .then((response) => {
+          setMunicipality(response.data[0].municipio);
+          setState(response.data[0].estado);
+        })
+        .catch((err) => console.log("Error al cargar el municipio y el estado: ", err));
+    }
+  }
+  //Fin funciones Sepomex
 
   const validatePassword = (password) => {
     const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])/;
@@ -75,28 +74,42 @@ export const RegisterScreen = () => {
 
     // Recolecta los datos del formulario
     const formData = new FormData(form);
-    const userData = {
+    const pacData = {
       Nombre: formData.get("formFirstName"),
       Apellido: formData.get("formLastName"),
-      Edad: formData.get("formEdad"),
+      FechaNacimiento: formData.get("formFechaNacimiento"),
       Telefono: formData.get("formTelefono"),
-      Estado: selectedState,
-      Municipio: selectedMunicipality,
+      Calle: formData.get("formCalle"),
+      NumExt: formData.get("formNumeroExterior"),
+      NumInt: formData.get("formNumeroInterior"),
       Colonia: selectedColonia,
       Alergias: formData.get("formAlergias"),
+      User: ""
+    };
+    const userData = {
       Correo: formData.get("formEmail"),
       Contraseña: formData.get("formPassword"),
-    };
-
-    axios
-      .post("http://localhost:3001/RegisterUser", userData)
-      .then(() => {
-        alert("Usuario registrado con éxito");
-        form.reset(); // Opcional: limpia el formulario después del registro
+      FotoPerfil: "",
+      Rol: 3
+    }
+    axios.post("http://localhost:3001/RegisterUser", userData)
+      .then((response) => {
+        if (response.status === 200) {
+          pacData.User = response.data.insertId;
+          axios
+            .post("http://localhost:3001/RegisterPaciente", pacData)
+            .then(() => {
+              alert("Usuario registrado con éxito");
+              form.reset(); // Opcional: limpia el formulario después del registro
+            })
+            .catch((error) => {
+              console.error("Hubo un error al registrar el usuario", error);
+            });
+        }
       })
-      .catch((error) => {
-        console.error("Hubo un error al registrar el usuario", error);
-      });
+      .catch((error) => console.log("Error al registrar usuario: ", error));
+
+
   };
 
   return (
@@ -151,18 +164,15 @@ export const RegisterScreen = () => {
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group controlId="formEdad" className="mb-3">
-                <Form.Label>Edad</Form.Label>
+              <Form.Group controlId="formFechaNacimiento" className="mb-3">
+                <Form.Label>Fecha de Nacimiento</Form.Label>
                 <Form.Control
-                  type="number"
-                  placeholder="Edad"
-                  name="formEdad"
+                  type="date"
+                  name="formFechaNacimiento"
                   required
-                  min="1"
-                  max="120"
                 />
                 <Form.Control.Feedback type="invalid">
-                  Ingresa tu edad.
+                  Ingresa tu fecha de nacimiento
                 </Form.Control.Feedback>
               </Form.Group>
 
@@ -180,48 +190,46 @@ export const RegisterScreen = () => {
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group controlId="formEstado" className="mb-3">
-                <Form.Label>Estado</Form.Label>
+              {/* Comienza bloque dirección */}
+              <Form.Group controlId="formCalle" className="mb-3">
+                <Form.Label>Calle</Form.Label>
                 <Form.Control
-                  as="select"
+                  name="formCalle"
+                  type="text"
+                  placeholder="Ingresa el nombre de la calle"
                   required
-                  value={selectedState}
-                  onChange={handleStateChange}
-                  name="formEstado"
-                >
-                  <option value="">Selecciona tu estado</option>
-                  {Array.isArray(states) &&
-                    states.map((state) => (
-                      <option key={state.id} value={state.id}>
-                        {state.nombre}
-                      </option>
-                    ))}
-                </Form.Control>
-                <Form.Control.Feedback type="invalid">
-                  Selecciona tu estado.
-                </Form.Control.Feedback>
+                />
               </Form.Group>
 
-              <Form.Group controlId="formMunicipio" className="mb-3">
-                <Form.Label>Municipio</Form.Label>
+              <Form.Group controlId="formNumeroExterior" className="mb-3">
+                <Form.Label>Número Exterior</Form.Label>
                 <Form.Control
-                  as="select"
+                  name="formNumeroExterior"
+                  type="text"
+                  placeholder="Ingresa el número exterior"
                   required
-                  value={selectedMunicipality}
-                  onChange={handleMunicipalityChange}
-                  name="formMunicipio"
-                >
-                  <option value="">Selecciona tu municipio</option>
-                  {Array.isArray(municipalities) &&
-                    municipalities.map((municipality) => (
-                      <option key={municipality.id} value={municipality.id}>
-                        {municipality.nombre}
-                      </option>
-                    ))}
-                </Form.Control>
-                <Form.Control.Feedback type="invalid">
-                  Selecciona tu municipio.
-                </Form.Control.Feedback>
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formNumeroInterior" className="mb-3">
+                <Form.Label>Número Interior</Form.Label>
+                <Form.Control
+                  name="formNumeroInterior"
+                  type="text"
+                  placeholder="Ingresa el número interior"
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formCodigoPostal" className="mb-3">
+                <Form.Label>Código Postal</Form.Label>
+                <Form.Control
+                  name="formCodigoPostal"
+                  type="text"
+                  placeholder="Ingresa el nombre de la calle"
+                  maxLength="5"
+                  onInput={fetchColonies}
+                  required
+                />
               </Form.Group>
 
               <Form.Group controlId="formColonia" className="mb-3">
@@ -230,7 +238,7 @@ export const RegisterScreen = () => {
                   as="select"
                   required
                   value={selectedColonia}
-                  onChange={(e) => setSelectedColonia(e.target.value)}
+                  onChange={handleColonyChange}
                   name="formColonia"
                 >
                   <option value="">Selecciona tu colonia</option>
@@ -245,6 +253,33 @@ export const RegisterScreen = () => {
                   Selecciona tu colonia.
                 </Form.Control.Feedback>
               </Form.Group>
+
+              <Form.Group controlId="formMunicipio" className="mb-3">
+                <Form.Label>Municipio</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={municipality != "" ? municipality : 'Selecciona una colonia'}
+                  name="formMunicipio"
+                  disabled
+                />
+                <Form.Control.Feedback type="invalid">
+                  Selecciona tu municipio.
+                </Form.Control.Feedback>
+              </Form.Group>
+
+              <Form.Group controlId="formEstado" className="mb-3">
+                <Form.Label>Estado</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={state != "" ? state : 'Selecciona una colonia'}
+                  name="formEstado"
+                  disabled
+                />
+                <Form.Control.Feedback type="invalid">
+                  Selecciona tu estado.
+                </Form.Control.Feedback>
+              </Form.Group>
+              {/* Termina Bloque Dirección */}
 
               <Form.Group controlId="formAlergias" className="mb-3">
                 <Form.Label>Alergias</Form.Label>

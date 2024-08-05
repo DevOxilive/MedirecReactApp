@@ -10,6 +10,8 @@ export const PrescriptionScreen = () => {
         console.log(response);
     }
     useEffect(() => {
+        const userData = JSON.parse(localStorage.getItem('user'));
+        console.log(userData);
         patients();
     }, []);
     return (

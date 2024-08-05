@@ -62,13 +62,13 @@ export const Login = () => {
     // Redirige al usuario según el rol almacenado
     switch (redirectPath) {
       
-      case "paciente":
+      case 1:
         navigate("/homePaciente");
         break;
-      case "doctor":
+      case 2:
         navigate("/homeDoctor");
         break;
-      case "administrador":
+      case 3:
         navigate("/homeAdmin");
         break;
       default:

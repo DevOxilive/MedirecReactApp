@@ -7,22 +7,22 @@ export const RegisterDoctor = (app, dbMedirec) => {
       formEspecialidad = req.body.Especialidad,
       formFechaNacimiento = req.body.FechaNacimiento,
       formTelefono = req.body.Telefono,
-      formEmail = req.body.Email,
-      formEstado = req.body.Estado,
-      formMunicipio = req.body.Estado,
+      formCalle = req.body.Calle,
+      formNumExt = req.body.NumExt,
+      formNumInt = req.body.NumInt,
       formColonia = req.body.Colonia,
       formLicencia = req.body.Licencia,
       formExperiencia = req.body.Experiencia,
       formHospitalProcedencia = req.body.HospitalProcedencia,
       formTarifa = req.body.Tarifa,
       formEducacion = req.body.Educación,
-      rol = 2
+      formUser = req.body.User
     } = req.body;
 
     console.log(req.body.Estado);
 
     // Debemos asegurarnos que los nombnres de la columna sean correctos en la base de datos
-    const INSERT_DOCTOR_QUERY = `INSERT INTO doctor(doc_nombre , doc_apellidos , doc_especialidad , doc_fecha_nacimiento , doc_telefono , doc_email , doc_estado , doc_municipio , doc_colonia , doc_numero_licencia , doc_anios_experiencia , doc_afiliacion_hospitalaria , doc_tarifa_consulta , doc_educacion , rol ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+    const INSERT_DOCTOR_QUERY = `INSERT INTO doctores (doc_nombre , doc_apellidos , doc_especialidad , doc_fecha_nacimiento , doc_telefono , doc_calle , doc_num_ext , doc_num_int , doc_id_colonia, doc_numero_licencia , doc_anios_experiencia , doc_afiliacion_hospitalaria , doc_tarifa_consulta , doc_educacion , doc_id_user ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
     dbMedirec.query(
       INSERT_DOCTOR_QUERY,
       [
@@ -31,16 +31,16 @@ export const RegisterDoctor = (app, dbMedirec) => {
         formEspecialidad,
         formFechaNacimiento,
         formTelefono,
-        formEmail,
-        formEstado,
-        formMunicipio,
+        formCalle,
+        formNumExt,
+        formNumInt,
         formColonia,
         formLicencia,
         formExperiencia,
         formHospitalProcedencia,
         formTarifa,
         formEducacion,
-        rol
+        formUser
       ],
       (err, result) => {
         if (err) {

@@ -4,10 +4,9 @@ import mysql from 'mysql';
 import fs from 'fs';
 import multer from 'multer';
 
-import { getEstados } from './JavaScript/Users/getEstados.js';
-import { getMunicipios } from './JavaScript/Users/getMunicipios.js';
+import { getEstadoYMunicipio } from './JavaScript/Users/getEstadoYMunicipio.js';
 import { getColonias } from './JavaScript/Users/getColonias.js';
-import { registerUser } from './JavaScript/Users/registerUser.js';
+import { registerPaciente } from './JavaScript/Users/registerPaciente.js';
 import { loginUser } from './JavaScript/Access/loginLogic.js';
 import { getProducts } from './JavaScript/Users/getProducts.js';
 import { GetUsers } from './JavaScript/Admin/Users/GetUsers.js';
@@ -21,6 +20,7 @@ import { GetProducts } from './JavaScript/Admin/Products/GetProducts.js';
 import { EditProduct } from './JavaScript/Admin/Products/EditProduct.js';
 import { DeleteProduct } from './JavaScript/Admin/Products/deleteProduct.js';
 import { RegisterProduct } from './JavaScript/Admin/Products/RegisterProduct.js';
+import { registerUser } from './JavaScript/Users/registerUser.js';
 
 
 // Configuración de la conexión para Medirec
@@ -67,9 +67,9 @@ app.use(cors());
 app.use(express.json());
 
 
-getEstados(app, dbSepomex);
-getMunicipios(app, dbSepomex);
-getColonias(app, dbSepomex);
+getEstadoYMunicipio(app, dbMedirec);
+getColonias(app, dbMedirec);
+registerPaciente(app, dbMedirec);
 registerUser(app, dbMedirec);
 loginUser(app, dbMedirec);
 getProducts(app, dbMedirec);

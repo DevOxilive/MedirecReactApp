@@ -1,46 +1,32 @@
 export const registerUser = (app, db) => {
-  // Ruta para registrar usuarios
-  app.post("/RegisterUser", (req, res) => {
-    const {
-      formFirstName = req.body.Nombre,
-      formLastName = req.body.Apellido,
-      formEdad = req.body.Edad,
-      formTelefono = req.body.Telefono,
-      formEstado = req.body.Estado,
-      formMunicipio = req.body.Municipio,
-      formColonia = req.body.Colonia,
-      formAlergias = req.body.Alergias,
-      formEmail = req.body.Correo,
-      formPassword = req.body.Contraseña,
-      id_rol = 2,
-    } = req.body;
-
-    // Asegúrate de usar los nombres de columna correctos en tu tabla de base de datos
-    const INSERT_USER_QUERY = `INSERT INTO usuario (usa_nombre, usa_apellidos, usa_edad, usa_telefono, usa_estado, usa_municipio, usa_colonia, usa_alergias, usa_email, usa_contraseña, id_rol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    db.query(
-      INSERT_USER_QUERY,
-      [
-        formFirstName,
-        formLastName, 
-        formEdad,
-        formTelefono,
-        formEstado,
-        formMunicipio,
-        formColonia,
-        formAlergias,
-        formEmail,
-        formPassword,
-        id_rol,
-      ],
-      (err, result) => {
-        if (err) {
-          console.error("Error al registrar usuario:", err);
-          res.status(400).send("Error al registrar usuario");
-        } else {
-          console.log("Usuario registrado correctamente");
-          res.status(200).send("Usuario registrado correctamente");
+    // Ruta para registrar usuarios
+    app.post("/RegisterUser", (req, res) => {
+      const {
+        formEmail = req.body.Correo,
+        formPassword = req.body.Contraseña,
+        formFotoPerfil = req.body.FotoPerfil,
+        formRol = req.body.Rol,
+      } = req.body;
+  
+      // Asegúrate de usar los nombres de columna correctos en tu tabla de base de datos
+      const INSERT_USER_QUERY = 'INSERT INTO `medirecactreact`.`usuarios` (`usa_email`, `usa_contraseña`, `usa_foto_perfil`, `rol`) VALUES ( ?, ?, ?, ? );';
+      
+      db.query(
+        INSERT_USER_QUERY,
+        [
+          formEmail,
+          formPassword,
+          formFotoPerfil,
+          formRol
+        ],
+        (err, result) => {
+          if (err) {
+            console.error("Error al registrar usuario:", err);
+            res.status(400).send("Error al registrar usuario");
+          } else {
+            res.status(200).send(result);
+          }
         }
-      }
-    );
-  });
-};
+      );
+    });
+  };

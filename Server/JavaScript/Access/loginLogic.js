@@ -4,21 +4,21 @@ export const loginUser = (app, db) => {
 
     // Consulta SQL para obtener toda la información del paciente
     const LOGIN_USER_QUERY = `
-      SELECT 'paciente' AS rol, usa_nombre AS nombre, usa_email AS email, usa_telefono AS telefono 
+      SELECT rol, usa_nombre AS nombre, usa_email AS email, usa_telefono AS telefono 
       FROM usuario 
-      WHERE usa_email = ? AND usa_contraseña = ?`;
+      WHERE usa_email = ? AND usa_contraseña = ? AND rol = 1`;
 
     // Consulta SQL para obtener toda la información del doctor
     const LOGIN_DOCTOR_QUERY = `
-      SELECT 'doctor' AS rol, doc_nombre AS nombre, doc_email AS email, doc_numero_licencia AS licencia 
-      FROM doctor 
-      WHERE doc_email = ? AND doc_numero_licencia = ?`;
+      SELECT rol, usa_nombre AS nombre, usa_email AS email, usa_telefono AS telefono 
+      FROM usuario 
+      WHERE usa_email = ? AND usa_contraseña = ? AND rol = 2`;
 
     // Consulta SQL para obtener toda la información del administrador
     const LOGIN_ADMIN_QUERY = `
-      SELECT 'administrador' AS rol, adm_nombre AS nombre, adm_email AS email 
-      FROM administrador 
-      WHERE adm_email = ? AND adm_password = ?`;
+      SELECT rol, usa_nombre AS nombre, usa_email AS email, usa_telefono AS telefono 
+      FROM usuario 
+      WHERE usa_email = ? AND usa_contraseña = ? AND rol = 3`;
 
     // Primero intenta buscar en la tabla de usuarios
     db.query(LOGIN_USER_QUERY, [email, password], (err, result) => {
